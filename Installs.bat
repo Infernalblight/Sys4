@@ -1,1 +1,1 @@
-pip install discord.py pygetwindow tk requests
+pip install discord.py PyGetWindow tk requests GitPython pywin32
